@@ -4,6 +4,7 @@
     "slug": "splitsnap",
     "version": "1.0.0",
     "orientation": "portrait",
+    "main": "App.tsx",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
@@ -13,20 +14,36 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "SplitSnap needs camera access to scan receipts.",
+        "NSPhotoLibraryUsageDescription": "SplitSnap needs photo library access to upload receipts."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.READ_MEDIA_IMAGES"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "scheme": "splitsnap",
     "plugins": [
-      "expo-router"
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "SplitSnap needs photo library access to upload receipts.",
+          "cameraPermission": "SplitSnap needs camera access to scan receipts."
+        }
+      ],
+      "expo-asset"
     ]
   }
 }

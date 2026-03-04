@@ -3,6 +3,12 @@ export type RootTabParamList = {
   Home: undefined;
   Groups: undefined;
   History: undefined;
+  Scan: undefined;
+};
+
+export type ScanStackParamList = {
+  ScanCamera: undefined;
+  Split: { receiptData: ReceiptData };
 };
 
 // Domain types
@@ -57,4 +63,19 @@ export type Balance = {
   amount: number;
   currency: string;
   groupId?: string;     // undefined means across all groups
+};
+
+// Receipt / scanning types
+
+export type ReceiptItem = {
+  name: string;
+  price: number;
+};
+
+export type ReceiptData = {
+  items: ReceiptItem[];
+  subtotal: number;
+  tax: number;
+  tip: number;
+  total: number;
 };

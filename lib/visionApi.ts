@@ -1,40 +1,22 @@
-// Google Cloud Vision API integration stub
-// Docs: https://cloud.google.com/vision/docs/reference/rest
-
-const VISION_API_KEY = 'YOUR_GOOGLE_CLOUD_VISION_API_KEY';
+// Google Cloud Vision API — DOCUMENT_TEXT_DETECTION
+// Docs: https://cloud.google.com/vision/docs/reference/rest/v1/images/annotate
+//
+// TODO: move API key to an environment variable (e.g. via expo-constants / .env)
+const VISION_API_KEY = 'AIzaSyAYW3pkyIop-ZIiWTgv0wkXwH6TN0empBU';
 const VISION_API_URL = `https://vision.googleapis.com/v1/images:annotate?key=${VISION_API_KEY}`;
 
-export type VisionAnnotation = {
-  description: string;
-  boundingPoly?: {
-    vertices: Array<{ x: number; y: number }>;
-  };
-};
-
-export type ReceiptParseResult = {
-  rawText: string;
-  totalAmount?: number;
-  lineItems: Array<{
-    description: string;
-    amount: number;
-  }>;
-  currency?: string;
-  date?: string;
-  merchantName?: string;
-};
-
 /**
- * Send a base64-encoded image to the Vision API for OCR text detection.
- * Returns the raw response from the API.
+ * Send a base64-encoded image to Cloud Vision and return the full OCR text.
+ *
+ * @param base64Image  Raw base64 string — no "data:image/..." prefix.
+ * @returns            The concatenated text found in the image.
  */
-export async function detectTextInImage(
-  base64Image: string
-): Promise<VisionAnnotation[]> {
+export async function extractTextFromImage(base64Image: string): Promise<string> {
   const body = {
     requests: [
       {
         image: { content: base64Image },
-        features: [{ type: 'TEXT_DETECTION', maxResults: 1 }],
+        features: [{ type: 'DOCUMENT_TEXT_DETECTION' }],
       },
     ],
   };
@@ -46,32 +28,17 @@ export async function detectTextInImage(
   });
 
   if (!response.ok) {
-    throw new Error(`Vision API error: ${response.status} ${response.statusText}`);
+    const msg = await response.text().catch(() => response.statusText);
+    throw new Error(`Vision API error ${response.status}: ${msg}`);
   }
 
   const data = await response.json();
-  const textAnnotations: VisionAnnotation[] =
-    data.responses?.[0]?.textAnnotations ?? [];
 
-  return textAnnotations;
-}
+  // DOCUMENT_TEXT_DETECTION returns fullTextAnnotation with the complete text block
+  const fullText: string =
+    data.responses?.[0]?.fullTextAnnotation?.text ??
+    data.responses?.[0]?.textAnnotations?.[0]?.description ??
+    '';
 
-/**
- * High-level helper: take a receipt image (base64) and extract
- * structured expense data. Parsing logic to be implemented.
- */
-export async function parseReceiptImage(
-  base64Image: string
-): Promise<ReceiptParseResult> {
-  const annotations = await detectTextInImage(base64Image);
-  const rawText = annotations[0]?.description ?? '';
-
-  // TODO: implement receipt parsing logic
-  // - Extract total amount using regex / LLM
-  // - Extract line items
-  // - Extract merchant name and date
-  return {
-    rawText,
-    lineItems: [],
-  };
+  return fullText;
 }
