@@ -1,7 +1,5 @@
 // Receipt parser — uses Claude to extract structured data from raw OCR text.
-//
-// TODO: move API key to an environment variable (e.g. via expo-constants / .env)
-const ANTHROPIC_API_KEY = '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';
+const ANTHROPIC_API_KEY = process.env.EXPO_PUBLIC_ANTHROPIC_API_KEY!;
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
 
 // claude-haiku-4-5 is the latest Haiku model (faster + cheaper than Sonnet/Opus)

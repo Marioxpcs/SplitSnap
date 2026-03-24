@@ -1,8 +1,6 @@
 // Google Cloud Vision API — DOCUMENT_TEXT_DETECTION
 // Docs: https://cloud.google.com/vision/docs/reference/rest/v1/images/annotate
-//
-// TODO: move API key to an environment variable (e.g. via expo-constants / .env)
-const VISION_API_KEY = 'AIzaSyAYW3pkyIop-ZIiWTgv0wkXwH6TN0empBU';
+const VISION_API_KEY = process.env.EXPO_PUBLIC_VISION_API_KEY!;
 const VISION_API_URL = `https://vision.googleapis.com/v1/images:annotate?key=${VISION_API_KEY}`;
 
 /**
